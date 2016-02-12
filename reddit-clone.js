@@ -26,7 +26,7 @@ Content.belongsTo(User); // This will add a `setUser` function on content object
 User.hasMany(Content); // This will add an `addContent` function on user objects
 
 // User <-> Vote <-> Content relationship
-User.belongsToMany(Content, {through: Vote, as: 'Upvotes'}); // This will add an `add`
+User.belongsToMany(Content, {through: Vote, as: 'upVotes'}); // This will add an `add`
 Content.belongsToMany(User, {through: Vote});
 
 db.sync(); // Only needs to be used once!
@@ -48,6 +48,19 @@ function createNewContent (userID, url, title) {
     return user.createContent({
       url: url,
       title: title
+    })
+  })
+}
+
+/*Write a function called voteOnContent that takes a content ID, user ID, a isUpVote boolean and a callback. This function will create a new vote for a piece of content and for the user that was passed to it.*/
+function voteOnContent (contentID, userID, isUpVote) {
+  return Promise.all([
+    User.findById(userID),
+    Content.findById(contentID)
+  ])
+  .then( function ([user, content]) {
+    user.addUpVotes(content, {
+      upVote: isUpVote
     })
   })
 }
