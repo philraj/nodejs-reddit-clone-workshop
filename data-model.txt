@@ -1,0 +1,49 @@
+    var User = db.define('user', {
+      username: Sequelize.STRING,
+      email: Sequelize.STRING,
+      password: Sequelize.STRING // TODO: make the passwords more secure!
+    });
+
+This defines a User model with the given fields, and then adds an id for each 
+instance of the model, along with timestamps for creation and updates.
+
+
+
+    var Content = db.define('content', {
+      url: Sequelize.STRING,
+      title: Sequelize.STRING
+    });
+
+Same as above, to model a piece of content posted on the site.
+
+
+
+    var Vote = db.define('vote', {
+      upVote: Sequelize.BOOLEAN
+    });
+
+Same as above, to model up/downvotes on content.
+    
+    
+    
+    Content.belongsTo(User); // This will add a `setUser` function on content objects
+    User.hasMany(Content); // This will add an `addContent` function on user objects
+
+This specifies that each piece of content is associated with an instance of User,
+who is the user that created the content. It adds a userId foreign key to the
+source (Content).
+It also says that an instance of User can be associated with many pieces of content
+that they created. A foreign key will be placed on each piece of content, referring
+back to the user who created it.
+These methods also add functions to the prototype of each model which can be used 
+to manipulate the data.
+
+
+
+    User.belongsToMany(Content, {through: Vote, as: 'Upvotes'});
+    Content.belongsToMany(User, {through: Vote});
+
+Every piece of content is associated with all the instances of User who voted on
+the content. This relation is done through the Vote model, each instance of which
+refers to an instance of both User and Content, linking the two.
+It also defines a set of functions which can be used on instances of User and Content.
