@@ -30,3 +30,24 @@ User.belongsToMany(Content, {through: Vote, as: 'Upvotes'}); // This will add an
 Content.belongsToMany(User, {through: Vote});
 
 db.sync(); // Only needs to be used once!
+
+
+
+function createNewUser (name, pass, email, callback) {
+  User.create({
+    username: name,
+    password: pass,
+    email: email
+  })
+  .then(callback);
+}
+
+function createNewContent (userID, url, title) {
+  return User.findById(userID)
+  .then( function(user) {
+    return user.createContent({
+      url: url,
+      title: title
+    })
+  })
+}
